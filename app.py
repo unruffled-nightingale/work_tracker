@@ -1,7 +1,7 @@
 import os
 import json
 from flask import Flask, jsonify, request
-from db import DatabaseFactory
+from work_tracker import WorkTracker
 
 
 try:
@@ -9,13 +9,8 @@ try:
 except KeyError:
     from GLOBALS import DEV_PG_CONNECION as DB_CONNECTION
 
-# Connect to database
-db = DatabaseFactory.connect('Postgres', DB_CONNECTION)
 
-# Instantiate database table object
-work_tracker_log = db.get_table(DB_CONNECTION['user'], 'work_tracker_log')
-tasks = db.get_table(DB_CONNECTION['user'], 'tasks')
-users = db.get_table(DB_CONNECTION['user'], 'users')
+wt = WorkTracker(DB_CONNECTION)
 
 app = Flask(__name__)
 
@@ -26,12 +21,7 @@ def log_task():
     Inserts a task into the table work_tracker_log
     """
     data = json.loads(request.data.decode('utf-8'))
-    try:
-        work_tracker_log.insert(data)
-        db.commit()
-        return jsonify({'record inserted'})
-    except Exception as e:
-        return jsonify({'error': e})
+    WorkTracker.log_task(data)
 
 @app.route('/add_task', methods=['POST'])
 def add_task():

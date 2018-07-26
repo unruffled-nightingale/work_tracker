@@ -23,6 +23,7 @@ class TestPostgres(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.db = Postgres(DEV_PG_CONNECION)
+        cls.db.connect()
 
     def test_connect(self):
         """Testing that Postgres class can connect to database"""
@@ -86,7 +87,7 @@ class TestPostgresTable(unittest.TestCase):
         pass
 
     def test_delete(self):
-        """Testing the error on the insert function"""
+        """Testing the delete function"""
 
         # Insert some values that we can delete
         sql = "insert into ut_work_tracker values ('value_1', 2)"
@@ -107,4 +108,21 @@ class TestPostgresTable(unittest.TestCase):
         """Testing the error on the insert function"""
         pass
 
+    def test_select(self):
+        """Testing the error on the insert function"""
+
+        # Insert some values that we can delete
+        sql = "insert into ut_work_tracker values ('value_1', 2)"
+        self.cur.execute(sql)
+        self.conn.commit()
+
+        # Run insert function
+        row = {'col_1': 'value_1', 'col_2': 2}
+        result = self.table.select(row)
+        expected = [('value_1', 2)]
+        self.assertEqual(result, expected)
+
+    def test_select_error(self):
+        """Testing the error on the insert function"""
+        pass
 

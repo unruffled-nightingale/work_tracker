@@ -55,9 +55,9 @@ class Postgres(Database):
 class PostgresTable(object):
 
     def __init__(self, cursor, schema, name):
-        self.__cur = cursor
-        self.__schema = schema
-        self.__name = name
+        self._cur = cursor
+        self._schema = schema
+        self._name = name
 
     def insert(self, row):
         """
@@ -67,8 +67,8 @@ class PostgresTable(object):
         """
         values = ['%('+e+')s' for e in row.keys()]
         cols = [e for e in row.keys()]
-        sql = "insert into %s (%s) values (%s)" % (self.__name, ",".join(cols), ",".join(values))
-        self.__cur.execute(sql, row)
+        sql = "insert into %s (%s) values (%s)" % (self._name, ",".join(cols), ",".join(values))
+        self._cur.execute(sql, row)
 
     def delete(self, row):
         """
@@ -78,6 +78,19 @@ class PostgresTable(object):
         :param row: A python dictionary of columns and values
         """
         clause = [e + ' = %('+e+')s' for e in row.keys()]
-        sql = "delete from %s  where %s" % (self.__name, " and ".join(clause))
-        self.__cur.execute(sql, row)
+        sql = "delete from %s  where %s" % (self._name, " and ".join(clause))
+        self._cur.execute(sql, row)
+
+    def select(self, row):
+        """
+        Selects data from a table based on a where clause constructed from
+        the row parameter (as a python dictionary)
+        NOTE: Needs updating - weak to SQL injection
+        :param row: A python dictionary of columns and values
+        """
+        clause = [e + ' = %('+e+')s' for e in row.keys()]
+        sql = "select * from %s where %s" % (self._name, " and ".join(clause))
+        self._cur.execute(sql, row)
+        return self._cur.fetchall()
+
 
