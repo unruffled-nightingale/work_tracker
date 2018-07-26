@@ -9,7 +9,8 @@ class TestDatabaseFactory(unittest.TestCase):
 
     def test_connect_postgres(self):
         """Testing that we can connect to Poastgres through the factory"""
-        DatabaseFactory.connect('Postgres', DEV_PG_CONNECION)
+        db = DatabaseFactory.connect('Postgres', DEV_PG_CONNECION)
+        self.assertEqual('Postgres', type(db).__name__)
 
     def test_connect_bad_client(self):
         """Testing that we error if database does not exist"""
@@ -23,11 +24,16 @@ class TestPostgres(unittest.TestCase):
     def setUpClass(cls):
         cls.db = Postgres(DEV_PG_CONNECION)
 
-
     def test_connect(self):
         """Testing that Postgres class can connect to database"""
-        self.db.connect1()
+        self.db.connect()
+        # Check the connection is alive by issuing simple sql statement
+        self.db._cur.execute('select 1')
 
+    def test_get_table(self):
+        """Testing that we can get PostgresTable object"""
+        table = self.db.get_table('schema', 'name')
+        self.assertEqual('PostgresTable', type(table).__name__)
 
 
 class TestPostgresTable(unittest.TestCase):
@@ -46,7 +52,6 @@ class TestPostgresTable(unittest.TestCase):
         schema = DEV_PG_CONNECION['user']
         name = 'ut_work_tracker'
         cls.table = PostgresTable(cls.cur, schema, name)
-
 
     @classmethod
     def tearDownClass(cls):

@@ -16,26 +16,27 @@ class DatabaseFactory(object):
 class Database(object):
 
     def __init__(self, connection):
-        self.__connection = connection
+        self._connection = connection
+        self._cur = None
+        self._conn = None
 
-    def connect1(self):
-        self.__cur = None
-        self.__conn = None
+    def connect(self):
+        pass
 
     def close(self):
-        if self.__conn:
-            self.__conn.close()
+        if self._conn:
+            self._conn.close()
 
     def commit(self):
-        if self.__conn:
-            self.__conn.commit()
+        if self._conn:
+            self._conn.commit()
 
 
 class Postgres(Database):
 
-    def connect1(self):
-        self._Database__conn = psycopg2.connect(self.__connection)
-        self._Database__cur = self._Database__conn.cursor()
+    def connect(self):
+        self._conn = psycopg2.connect(**self._connection)
+        self._cur = self._conn.cursor()
 
     def get_table(self, schema, name):
         """
@@ -44,7 +45,7 @@ class Postgres(Database):
         :param name: The name of the table
         :return: A PostgresTable object
         """
-        return PostgresTable(self.__cur, schema, name)
+        return PostgresTable(self._cur, schema, name)
 
     class Factory:
         def connect(self, connection):
