@@ -12,11 +12,11 @@ class TestAnalyse(unittest.TestCase):
 
         # Construct our original data set
         cls.data = [{'user_id': 'test user', 'task': '1', 'tstamp': datetime.datetime(2018, 7, 26, 20, 00, 00, 000000)},
-                {'user_id': 'test user', 'task': '2', 'tstamp': datetime.datetime(2018, 7, 26, 20, 10, 00, 000000)},
-                {'user_id': 'test user', 'task': '1', 'tstamp': datetime.datetime(2018, 7, 26, 20, 15, 00, 000000)},
-                {'user_id': 'test user', 'task': '2', 'tstamp': datetime.datetime(2018, 7, 26, 20, 20, 00, 000000)},
-                {'user_id': 'test user', 'task': '1', 'tstamp': datetime.datetime(2018, 7, 26, 20, 40, 00, 000000)}
-                ]
+                    {'user_id': 'test user', 'task': '2', 'tstamp': datetime.datetime(2018, 7, 26, 20, 10, 00, 000000)},
+                    {'user_id': 'test user', 'task': '1', 'tstamp': datetime.datetime(2018, 7, 26, 20, 15, 00, 000000)},
+                    {'user_id': 'test user', 'task': '2', 'tstamp': datetime.datetime(2018, 7, 26, 20, 20, 00, 000000)},
+                    {'user_id': 'test user', 'task': '1', 'tstamp': datetime.datetime(2018, 7, 26, 20, 40, 00, 000000)}
+                    ]
 
         # Initalise our instance of Analyse
         cls.analyse = Analyse(cls.data)
@@ -98,6 +98,3 @@ class TestAnalyse(unittest.TestCase):
         # Check that the raw DataFrame is still in its correct state
         assert_frame_equal(self.analyse.df, self.transform_df)
         assert_frame_equal(self.analyse.df_raw, self.raw_df)
-
-
-

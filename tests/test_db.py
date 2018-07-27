@@ -125,4 +125,3 @@ class TestPostgresTable(unittest.TestCase):
     def test_select_error(self):
         """Testing the error on the insert function"""
         pass
-

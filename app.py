@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from work_tracker import WorkTracker
 
 # todo create route for graph data
+# todo improve error handling
 
 try:
     DB_CONNECTION = json.loads(os.environ['PROD_PG_CONNECTION'])
@@ -11,7 +12,7 @@ except KeyError:
     from GLOBALS import DEV_PG_CONNECION as DB_CONNECTION
 
 
-wt = WorkTracker(DB_CONNECTION)
+wk = WorkTracker(DB_CONNECTION)
 
 app = Flask(__name__)
 
@@ -28,6 +29,7 @@ def log_task():
     except:
         return jsonify('log failed')
 
+
 @app.route('/add_task', methods=['POST'])
 def add_task():
     """
@@ -41,6 +43,7 @@ def add_task():
     except:
         return jsonify('adding task failed')
 
+
 @app.route('/add_user', methods=['POST'])
 def add_user():
     """
@@ -50,7 +53,7 @@ def add_user():
     try:
         wk.add_user(data)
         id = wk.get_user_id(data)
-        return jsonify({'user': id})
+        return jsonify({'user_id': id})
     except:
         return jsonify('ading user failed')
 

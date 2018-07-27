@@ -4,6 +4,7 @@ import psycopg2
 
 from GLOBALS import DEV_PG_CONNECION
 
+
 class TestPostgresTable(unittest.TestCase):
 
     @classmethod

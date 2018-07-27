@@ -50,7 +50,7 @@ class Analyse(object):
         """
 
         # Make sure we have ran transform
-        if not self.df:
+        if self.df is None:
             self.transform()
 
         # Copy from our transformed DataFrame
@@ -66,7 +66,7 @@ class Analyse(object):
         the accumulative time spent on each task over time. It has the following structure:
         |||||
         """
-        if not self.df:
+        if self.df is None:
             self.transform()
 
         # Copy from our transformed DataFrame
@@ -90,5 +90,3 @@ class Analyse(object):
         df_finish = self.df_line[['task', 'finished', 'total_time_spent_at_finish']]
         df_finish.rename(columns={'finished': 'time', 'total_time_spent_at_finish': 'total_time_spent'}, inplace=True)
         self.df_line = df_start.append(df_finish, ignore_index=True)#.sort_values('time')
-
-

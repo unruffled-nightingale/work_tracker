@@ -1,5 +1,6 @@
 import psycopg2
 
+
 class DatabaseFactory(object):
 
     # The list of available DB clients
