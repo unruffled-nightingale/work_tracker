@@ -72,10 +72,7 @@ class PostgresTable(object):
         values = ['%('+e+')s' for e in row.keys()]
         cols = [e for e in row.keys()]
         sql = "insert into %s (%s) values (%s)" % (self._name, ",".join(cols), ",".join(values))
-        try:
-            self._cur.execute(sql, row)
-        except psycopg2.IntegrityError:
-            raise IntegrityError('Failed')
+        self._cur.execute(sql, row)
 
     def delete(self, row):
         """
@@ -112,10 +109,3 @@ class IntegrityError(Exception):
         return(repr(self.value))
 
 
-class InsertError(Exception):
-
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return(repr(self.value))

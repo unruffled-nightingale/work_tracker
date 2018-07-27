@@ -3,6 +3,7 @@ import json
 from flask import Flask, jsonify, request
 from work_tracker import WorkTracker
 
+# todo create route for graph data
 
 try:
     DB_CONNECTION = json.loads(os.environ['PROD_PG_CONNECTION'])

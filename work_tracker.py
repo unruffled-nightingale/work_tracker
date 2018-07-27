@@ -1,6 +1,8 @@
 from db import DatabaseFactory
 from psycopg2 import IntegrityError
 
+# todo Improve exception handling
+# todo Remove dependency on psycopg2
 
 class WorkTracker(object):
 
@@ -40,7 +42,6 @@ class WorkTracker(object):
             self.db.commit()
         except IntegrityError:
             self.db.rollback()
-            print('hello')
 
         except Exception:
             self.db.rollback()
@@ -81,3 +82,10 @@ class WorkTracker(object):
         return {}
 
 
+class InsertError(Exception):
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return(repr(self.value))
