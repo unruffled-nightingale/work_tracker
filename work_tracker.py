@@ -1,57 +1,83 @@
-import os
-import json
-from flask import Flask, jsonify, request
 from db import DatabaseFactory
+from psycopg2 import IntegrityError
 
 
 class WorkTracker(object):
 
-    def __init__(self, DB_CONNECTION):
+    def __init__(self, db_connection):
 
-        self.db = DatabaseFactory.connect('Postgres', DB_CONNECTION)
+        self.db = DatabaseFactory.connect('Postgres', db_connection)
 
         self.db.connect()
 
         # Instantiate database table object
-        self.work_tracker_log = self.db.get_table(DB_CONNECTION['user'], 'work_tracker_log')
-        self.tasks = self.db.get_table(DB_CONNECTION['user'], 'tasks')
-        self.users = self.db.get_table(DB_CONNECTION['user'], 'users')
+        self.work_tracker_log = self.db.get_table(db_connection['user'], 'work_tracker_log')
+        self.tasks = self.db.get_table(db_connection['user'], 'tasks')
+        self.users = self.db.get_table(db_connection['user'], 'users')
 
     def log_task(self, data):
         """
         Logs a task into the table work_tracker_log
         :param data: A python dictionary of the form {'task_id' : ${task_id}, 'user': ${user_id}}
         """
-        self.work_tracker_log.insert(data)
-        self.db.commit()
+        try:
+            self.work_tracker_log.insert(data)
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise InsertError('The reference task/user cannot be found in the parent table')
+        except Exception:
+            self.db.rollback()
+            raise InsertError('Insert failed')
 
     def add_task(self, data):
         """
         Inserts a task into the table tasks
         :param data: A python dictionary of the form {'task' : ${task}}
         """
-        self.tasks.insert(data)
-        self.db.commit()
+        try:
+            self.tasks.insert(data)
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            print('hello')
 
-    def get_task(self, data):
+        except Exception:
+            self.db.rollback()
+            raise InsertError('Insert Failed')
+
+    def get_task_id(self, data):
         """
         Returns a task_id from table tasks
         :param data: A python dictionary of the form {'task' : ${task}}
         """
-        return self.tasks.select(data)[0]['task_id']
+        result = self.tasks.select(data)
+        if result:
+            return result[0]['task_id']
+        return {}
 
     def add_user(self, data):
         """
         Inserts a user into the table users
         :param data: A python dictionary of the form {'user' : ${user}}
         """
-        self.users.insert(data)
-        self.db.commit()
+        try:
+            self.users.insert(data)
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+        except Exception:
+            self.db.rollback()
+            raise InsertError('Insert Failed')
 
-    def get_user(self, data):
+    def get_user_id(self, data):
         """
         Returns a user_id from table users
         :param data: A python dictionary of the form {'user' : ${user}}
         """
-        return self.users.select(data)[0]['user_id']
+        result = self.users.select(data)
+        if result:
+            return result[0]['user_id']
+        return {}
+
 

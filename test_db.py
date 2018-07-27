@@ -119,7 +119,7 @@ class TestPostgresTable(unittest.TestCase):
         # Run insert function
         row = {'col_1': 'value_1', 'col_2': 2}
         result = self.table.select(row)
-        expected = [('value_1', 2)]
+        expected = [{'col_1': 'value_1', 'col_2': 2}]
         self.assertEqual(result, expected)
 
     def test_select_error(self):

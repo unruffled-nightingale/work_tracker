@@ -31,6 +31,10 @@ class Database(object):
         if self._conn:
             self._conn.commit()
 
+    def rollback(self):
+        if self._conn:
+            self._conn.commit()
+
 
 class Postgres(Database):
 
@@ -68,7 +72,10 @@ class PostgresTable(object):
         values = ['%('+e+')s' for e in row.keys()]
         cols = [e for e in row.keys()]
         sql = "insert into %s (%s) values (%s)" % (self._name, ",".join(cols), ",".join(values))
-        self._cur.execute(sql, row)
+        try:
+            self._cur.execute(sql, row)
+        except psycopg2.IntegrityError:
+            raise IntegrityError('Failed')
 
     def delete(self, row):
         """
@@ -91,6 +98,24 @@ class PostgresTable(object):
         clause = [e + ' = %('+e+')s' for e in row.keys()]
         sql = "select * from %s where %s" % (self._name, " and ".join(clause))
         self._cur.execute(sql, row)
-        return self._cur.fetchall()
+        cols = [desc[0] for desc in self._cur.description]
+        data = self._cur.fetchall()
+        return [dict(zip(cols, row)) for row in data]
 
 
+class IntegrityError(Exception):
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return(repr(self.value))
+
+
+class InsertError(Exception):
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return(repr(self.value))

@@ -21,7 +21,11 @@ def log_task():
     Inserts a task into the table work_tracker_log
     """
     data = json.loads(request.data.decode('utf-8'))
-    WorkTracker.log_task(data)
+    try:
+        wk.log_task(data)
+        return jsonify('task logged')
+    except:
+        return jsonify('log failed')
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
@@ -30,26 +34,24 @@ def add_task():
     """
     data = json.loads(request.data.decode('utf-8'))
     try:
-        tasks.insert(data)
-        task_id = tasks.select(data)['id']
-        db.commit()
-        return jsonify({'task_id': task_id})
-    except Exception as e:
-        return jsonify({'error': e})
+        wk.add_task(data)
+        id = wk.get_task_id(data)
+        return jsonify({'task_id': id})
+    except:
+        return jsonify('adding task failed')
 
 @app.route('/add_user', methods=['POST'])
-def add_task():
+def add_user():
     """
     Inserts a task into the table work_tracker_log
     """
     data = json.loads(request.data.decode('utf-8'))
     try:
-        users.insert(data)
-        user_id = users.select(data)['id']
-        db.commit()
-        return jsonify({'user_id': user_id})
-    except Exception as e:
-        return jsonify({'error': e})
+        wk.add_user(data)
+        id = wk.get_user_id(data)
+        return jsonify({'user': id})
+    except:
+        return jsonify('ading user failed')
 
 
 if __name__ == '__main__':
