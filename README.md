@@ -3,7 +3,7 @@ Hello Bene (and anyone else who might review this),
 Just a quick introduction to the code..
 
 The work_tracker application is an API that is intended to be the backend for a
-ReactJs application (which is very bare bones at the moments).
+ReactJs application (which is very bare bones at the moments) - https://github.com/unruffled-nightingale/work_tracker_react.
 
 There are a few areas for improvement, especially with error reporting ,and there are
 a few '#todo's throughtout the project.
