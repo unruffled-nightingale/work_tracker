@@ -1,2 +1,0 @@
-DEV_PG_CONNECION = {'database': 'kino_dev', 'user': 'kino', 'password': 'kino123', 'host': '212.71.253.63', 'port': '8089'}
-PROD_PG_CONNECION = {'database': 'kino_dev', 'user': 'kino', 'password': 'kino123', 'host': '212.71.253.63', 'port': '8089'}
