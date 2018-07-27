@@ -1,4 +1,5 @@
 import unittest
+import json
 import datetime
 from pandas import DataFrame
 from pandas.util.testing import assert_frame_equal
@@ -98,3 +99,51 @@ class TestAnalyse(unittest.TestCase):
         # Check that the raw DataFrame is still in its correct state
         assert_frame_equal(self.analyse.df, self.transform_df)
         assert_frame_equal(self.analyse.df_raw, self.raw_df)
+
+    def test_get_bar_grouping_json(self):
+        """ Tests that we correctly return the json of the bar graph DataFrame """
+        json_bar = self.analyse.get_bar_grouping_json()
+        result = json.loads(json_bar)
+
+        expected = [{'time_spent': 900, 'task': '1'}, {'time_spent': 1500, 'task': '2'}]
+
+        self.assertEqual(result, expected)
+
+        # Check that the raw DataFrame is still in its correct state
+        assert_frame_equal(self.analyse.df_bar, self.bar_df)
+
+    def test_get_line_grouping_json(self):
+        """ Tests that we correctly return the json of the bar graph DataFrame """
+        json_line = self.analyse.get_line_grouping_json()
+        result = json.loads(json_line)
+
+        expected = [{'task': '1', 'total_time_spent': 0, 'time': '2018-07-26 20:00:00'},
+                    {'task': '2', 'total_time_spent': 0, 'time': '2018-07-26 20:10:00'},
+                    {'task': '1', 'total_time_spent': 600, 'time': '2018-07-26 20:15:00'},
+                    {'task': '2', 'total_time_spent': 300, 'time': '2018-07-26 20:20:00'},
+                    {'task': '1', 'total_time_spent': 600, 'time': '2018-07-26 20:10:00'},
+                    {'task': '2', 'total_time_spent': 300, 'time': '2018-07-26 20:15:00'},
+                    {'task': '1', 'total_time_spent': 900, 'time': '2018-07-26 20:20:00'},
+                    {'task': '2', 'total_time_spent': 1500, 'time': '2018-07-26 20:40:00'}]
+
+        self.assertEqual(result, expected)
+
+        # Check that the raw DataFrame is still in its correct state
+        assert_frame_equal(self.analyse.df_line, self.line_df)
+
+    def test_plot_line(self):
+        """ Testing that we can plot the line graph. Requires manual inspection """
+        self.analyse.plot_line()
+
+        # Check that the raw DataFrame is still in its correct state
+        assert_frame_equal(self.analyse.df_line, self.line_df)
+
+
+    def test_plot_bar(self):
+        """ Testing that we can plot the bar graph. Requires manual inspection """
+        self.analyse.plot_bar()
+
+        # Check that the raw DataFrame is still in its correct state
+        assert_frame_equal(self.analyse.df_bar, self.bar_df)
+
+

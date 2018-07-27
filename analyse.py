@@ -90,3 +90,67 @@ class Analyse(object):
         df_finish = self.df_line[['task', 'finished', 'total_time_spent_at_finish']]
         df_finish.rename(columns={'finished': 'time', 'total_time_spent_at_finish': 'total_time_spent'}, inplace=True)
         self.df_line = df_start.append(df_finish, ignore_index=True)#.sort_values('time')
+
+    def plot_bar(self):
+        """
+        Plots the bar graph Dataframe
+        """
+
+        if self.df_bar is None:
+            self.set_bar_grouping()
+
+        # Copy from our transformed DataFrame
+        df_copy = self.df_bar.copy(deep=True)
+
+        ax = df_copy[['task', 'time_spent']].plot(kind='bar', title='TIME SPENT PER TASK')
+        ax.set_xlabel('TASK', fontsize=12)
+        ax.set_ylabel('SECONDS', fontsize=12)
+        plt.show()
+
+    def plot_line(self):
+        """
+        Plots the line graph Dataframe
+        """
+
+        if self.df_line is None:
+            self.set_line_grouping()
+
+        # Copy from our transformed DataFrame
+        df_copy = self.df_line.copy(deep=True)
+
+        df_copy.set_index('time', inplace=True)
+        ax = df_copy.groupby('task')['total_time_spent'].plot(legend=True, title="TIME SPENT ON EACH TASK OVER TIME")
+        plt.show()
+
+    def get_bar_grouping_json(self):
+        """
+        Returns the bar grouping as a json
+        """
+        if self.df_bar is None:
+            self.set_bar_grouping()
+
+        # Copy from our transformed DataFrame
+        df_copy = self.df_bar.copy(deep=True)
+
+        # Change datatypes
+        df_copy['time_spent'] = df_copy['time_spent'].astype(int)
+
+        return df_copy.to_json(orient='records')
+
+    def get_line_grouping_json(self):
+        """
+        Returns the line grouping as a json
+        """
+        if self.df_line is None:
+            self.set_line_grouping()
+
+        # Copy from our transformed DataFrame
+        df_copy = self.df_line.copy(deep=True)
+
+        # Change datatypes
+        df_copy['time'] = df_copy['time'].astype(str)
+        df_copy['total_time_spent'] = df_copy['total_time_spent'].astype(int)
+
+        return df_copy.to_json(orient='records')
+
+
