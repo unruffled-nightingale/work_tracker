@@ -138,7 +138,6 @@ class TestAnalyse(unittest.TestCase):
         # Check that the raw DataFrame is still in its correct state
         assert_frame_equal(self.analyse.df_line, self.line_df)
 
-
     def test_plot_bar(self):
         """ Testing that we can plot the bar graph. Requires manual inspection """
         self.analyse.plot_bar()

@@ -2,8 +2,7 @@ import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# todo create plots for graphs
-# todo output df as json
+# todo order by tstamp in transform
 
 class Analyse(object):
 

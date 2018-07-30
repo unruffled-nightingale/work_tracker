@@ -86,15 +86,17 @@ class PostgresTable(object):
         sql = "delete from %s  where %s" % (self._name, " and ".join(clause))
         self._cur.execute(sql, row)
 
-    def select(self, row):
+    def select(self, row=None):
         """
         Selects data from a table based on a where clause constructed from
         the row parameter (as a python dictionary)
         NOTE: Needs updating - weak to SQL injection
         :param row: A python dictionary of columns and values
         """
-        clause = [e + ' = %('+e+')s' for e in row.keys()]
-        sql = "select * from %s where %s" % (self._name, " and ".join(clause))
+        sql = "select * from %s" % (self._name)
+        if row is not None:
+            clause = [e + ' = %('+e+')s' for e in row.keys()]
+            sql = sql + " where %s" % (" and ".join(clause))
         self._cur.execute(sql, row)
         cols = [desc[0] for desc in self._cur.description]
         data = self._cur.fetchall()

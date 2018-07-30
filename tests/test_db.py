@@ -116,9 +116,19 @@ class TestPostgresTable(unittest.TestCase):
         self.cur.execute(sql)
         self.conn.commit()
 
-        # Run insert function
+        # Run select function
         row = {'col_1': 'value_1', 'col_2': 2}
         result = self.table.select(row)
+        expected = [{'col_1': 'value_1', 'col_2': 2}]
+        self.assertEqual(result, expected)
+
+        # Run select function only specifying one column
+        result = self.table.select({'col_1': 'value_1'})
+        expected = [{'col_1': 'value_1', 'col_2': 2}]
+        self.assertEqual(result, expected)
+
+        # Run select function only no columns
+        result = self.table.select()
         expected = [{'col_1': 'value_1', 'col_2': 2}]
         self.assertEqual(result, expected)
 
