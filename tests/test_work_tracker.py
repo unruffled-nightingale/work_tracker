@@ -297,7 +297,45 @@ class TestPostgresTable(unittest.TestCase):
         self.cur.execute("insert into work_tracker_log (user_id, task_id) values (%(user_id)s, %(task_id)s)", data)
         self.conn.commit()
         data = {'user_id': user_id}
-        result = json.loads(self.wk.get_bar_graph_data(data))
-        expected = [{"task":"test 1","time_spent":2},{"task":"test 2","time_spent":2}]
+        result = self.wk.get_bar_graph_data(data)
+        expected = [{"x":"test 1","y":2},{"x":"test 2","y":2}]
         self.assertEqual(expected, result)
+
+    def test_get_line_data(self):
+        """
+        Returns the line graph data for a particular user
+        :param data: Dictionary, schema: {'user_id' : ${user_id}}
+        """
+        self.cur.execute("insert into users (user_name) values ('test user')")
+        self.cur.execute('select user_id from users')
+        user_id = self.cur.fetchall()[0][0]
+        self.cur.execute("insert into tasks (task) values ('test 1')")
+        self.cur.execute('select task_id from tasks')
+        self.cur.execute("insert into tasks (task) values ('test 2')")
+        self.cur.execute('select task_id from tasks')
+        task_ids = self.cur.fetchall()
+        task_id_1 = task_ids[0][0]
+        task_id_2 = task_ids[1][0]
+        data = {'user_id': user_id, 'task_id': task_id_1}
+        self.cur.execute("insert into work_tracker_log (user_id, task_id) values (%(user_id)s, %(task_id)s)", data)
+        self.conn.commit()
+        time.sleep(2)
+        data = {'user_id': user_id, 'task_id': task_id_2}
+        self.cur.execute("insert into work_tracker_log (user_id, task_id) values (%(user_id)s, %(task_id)s)", data)
+        self.conn.commit()
+        time.sleep(2)
+        data = {'user_id': user_id, 'task_id': task_id_1}
+        self.cur.execute("insert into work_tracker_log (user_id, task_id) values (%(user_id)s, %(task_id)s)", data)
+        self.conn.commit()
+        data = {'user_id': user_id}
+        result = self.wk.get_line_graph_data(data)
+        expected = [
+            [
+                {'x': '2018-08-02 19:22:23.998827', 'y': 0},
+                {'x': '2018-08-02 19:22:26.086720', 'y': 2}
+            ], [
+                {'x': '2018-08-02 19:22:26.086720', 'y': 0},
+                {'x': '2018-08-02 19:22:28.111687', 'y': 2}]
+        ]
+        # todo pass in tstamp so we can predict result
 

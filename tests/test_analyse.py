@@ -102,8 +102,7 @@ class TestAnalyse(unittest.TestCase):
 
     def test_get_bar_grouping_json(self):
         """ Tests that we correctly return the json of the bar graph DataFrame """
-        json_bar = self.analyse.get_bar_grouping_json()
-        result = json.loads(json_bar)
+        result = self.analyse.get_bar_grouping_dict()
 
         expected = [{'time_spent': 900, 'task': '1'}, {'time_spent': 1500, 'task': '2'}]
 
@@ -112,10 +111,9 @@ class TestAnalyse(unittest.TestCase):
         # Check that the raw DataFrame is still in its correct state
         assert_frame_equal(self.analyse.df_bar, self.bar_df)
 
-    def test_get_line_grouping_json(self):
+    def test_get_line_grouping_dict(self):
         """ Tests that we correctly return the json of the bar graph DataFrame """
-        json_line = self.analyse.get_line_grouping_json()
-        result = json.loads(json_line)
+        result = self.analyse.get_line_grouping_dict()
 
         expected = [{'task': '1', 'total_time_spent': 0, 'time': '2018-07-26 20:00:00'},
                     {'task': '2', 'total_time_spent': 0, 'time': '2018-07-26 20:10:00'},

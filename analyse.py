@@ -121,7 +121,7 @@ class Analyse(object):
         ax = df_copy.groupby('task')['total_time_spent'].plot(legend=True, title="TIME SPENT ON EACH TASK OVER TIME")
         plt.show()
 
-    def get_bar_grouping_json(self):
+    def get_bar_grouping_dict(self):
         """
         Returns the bar grouping as a json
         """
@@ -134,9 +134,9 @@ class Analyse(object):
         # Change datatypes
         df_copy['time_spent'] = df_copy['time_spent'].astype(int)
 
-        return df_copy.to_json(orient='records')
+        return df_copy.to_dict(orient='records')
 
-    def get_line_grouping_json(self):
+    def get_line_grouping_dict(self):
         """
         Returns the line grouping as a json
         """
@@ -150,6 +150,6 @@ class Analyse(object):
         df_copy['time'] = df_copy['time'].astype(str)
         df_copy['total_time_spent'] = df_copy['total_time_spent'].astype(int)
 
-        return df_copy.to_json(orient='records')
+        return df_copy.to_dict(orient='records')
 
 

@@ -50,6 +50,7 @@ def add_user():
     id = wk.get_user_id(data)
     return jsonify({'user_id': id})
 
+
 @app.route('/add_current_task', methods=['POST'])
 def add_current_task():
     """
@@ -58,6 +59,7 @@ def add_current_task():
     data = json.loads(request.data.decode('utf-8'))
     wk.add_current_task(data)
     return jsonify('current task added')
+
 
 @app.route('/delete_current_task', methods=['POST'])
 def delete_current_task():
@@ -68,6 +70,7 @@ def delete_current_task():
     wk.delete_current_task(data)
     return jsonify('current task deleted')
 
+
 @app.route('/get_current_tasks', methods=['POST'])
 def get_current_tasks():
     """
@@ -76,6 +79,28 @@ def get_current_tasks():
     data = json.loads(request.data.decode('utf-8'))
     current_tasks = wk.get_current_tasks(data)
     return jsonify(current_tasks)
+
+
+@app.route('/get_bar_data', methods=['POST'])
+def get_bar_data():
+    """
+    Retrieves bar graph data for a particular user
+    """
+    data = json.loads(request.data.decode('utf-8'))
+    print(data)
+    bar_data = wk.get_bar_graph_data(data)
+    return jsonify(bar_data)
+
+
+@app.route('/get_line_data', methods=['POST'])
+def get_line_data():
+    """
+    Retrieves line graph data for a particular user
+    """
+    data = json.loads(request.data.decode('utf-8'))
+    print(data)
+    line_data = wk.get_line_graph_data(data)
+    return jsonify(line_data)
 
 
 if __name__ == '__main__':

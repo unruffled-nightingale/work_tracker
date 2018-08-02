@@ -1,6 +1,7 @@
 from db import DatabaseFactory
 from psycopg2 import IntegrityError
 from analyse import Analyse
+import collections
 
 # todo Move to proper ORM - just making more work for myself
 
@@ -145,7 +146,51 @@ class WorkTracker(object):
         data = self.db._cur.fetchall()
         self.db.commit()
         log_data = [dict(zip(cols, row)) for row in data]
-        return Analyse(log_data).get_bar_grouping_json()
+        if log_data == []:
+            return log_data
+
+        bar_data = Analyse(log_data).get_bar_grouping_dict()
+        for row in bar_data:
+            row['x'] = row['task']
+            row['y'] = row['time_spent']
+            del row['task']
+            del row['time_spent']
+
+        return bar_data
+
+    def get_line_graph_data(self, data):
+        """
+        Returns the line graph data for a particular user
+        :param data: Dictionary, schema: {'user_id' : ${user_id}}
+        """
+        sql = """
+           select l.user_id, t.task, l.tstamp
+             from %s l
+             join %s t
+               on l.task_id = t.task_id
+            where l.user_id = %s
+            order by l.tstamp asc
+        """ % (self.work_tracker_log._name, self.tasks._name, '%(user_id)s')
+        self.db._cur.execute(sql, data)
+        cols = [desc[0] for desc in self.db._cur.description]
+        data = self.db._cur.fetchall()
+        self.db.commit()
+        log_data = [dict(zip(cols, row)) for row in data]
+
+        if log_data == []:
+            return [[]]
+        line_data = Analyse(log_data).get_line_grouping_dict()
+
+        # We have to slightly restructure it for use with react-easy-chart
+        transformed = collections.defaultdict(list)
+        for row in line_data:
+            transformed[row['task']].append({'x': row['time'].split('.')[0], 'y': row['total_time_spent']})
+
+        transformed = [v for k, v in transformed.items()]
+
+        # Trim dates
+
+        return transformed
 
 
 class InsertError(Exception):
